@@ -20,7 +20,7 @@ public class Main2Activity extends AppCompatActivity {
     private Button cancel;
     private int position;
     private Intent intent;
-    private Incident incidentedit;
+    private Incident incidentedit= new Incident();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class Main2Activity extends AppCompatActivity {
         intent=getIntent();
         if(intent.getIntExtra("status",0)!=0){
             Incident incident = (Incident) intent.getSerializableExtra("incident");
-            //incidentedit = (Incident) DataSupport.where("title = ?",incident.getTitle()).find(Incident.class);
+            incidentedit = DataSupport.where("title = ? and content = ?",incident.getTitle(),incident.getContent()).findFirst(Incident.class);
             inputTitle.setText(incident.getTitle());
             inputContent.setText(incident.getContent());
             position = intent.getIntExtra("position", -1);
@@ -46,12 +46,14 @@ public class Main2Activity extends AppCompatActivity {
                 String content=inputContent.getText().toString();
 
                 if(!"".equals(title)){
-                    if(intent.getIntExtra("status",0)!=0) {
-                        incidentedit.setTitle(title);
-                        incidentedit.setContent(content);
-                        incidentedit.save();
-                    }
-                    Incident incident=new Incident(title,content);
+
+                    incidentedit.setTitle(title);
+                    incidentedit.setContent(content);
+                    incidentedit.save();
+
+                    Incident incident=new Incident();
+                    incident.setContent(content);
+                    incident.setTitle(title);
                     Intent intent1=new Intent();
                     intent1.putExtra("incident_return",incident);
                     intent1.putExtra("position",position);

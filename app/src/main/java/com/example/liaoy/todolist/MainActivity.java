@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent=new Intent(MainActivity.this,Main2Activity.class);
                 intent.putExtra("status",0);
                 intent.putExtra("position",incidentList.size());
-                intent.putExtra("incident",new Incident("",""));
+
                 startActivityForResult(intent,1);
                 break;
             default:
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 if(resultCode==RESULT_OK){
                     Incident returnedIncident= (Incident) data.getSerializableExtra("incident_return");
-                    returnedIncident.save();
+
                     incidentList.add(returnedIncident);
                     adapter.notifyItemInserted(incidentList.size()-1);
                     Toast.makeText(MainActivity.this,"Successfully added",Toast.LENGTH_SHORT).show();
