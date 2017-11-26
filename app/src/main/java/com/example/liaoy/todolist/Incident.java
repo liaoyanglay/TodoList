@@ -1,12 +1,15 @@
 package com.example.liaoy.todolist;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 
 /**
  * Created by liaoy on 2017/11/12.
  */
 
-public class Incident implements Serializable{
+public class Incident extends DataSupport implements Serializable{
+
     private String title;
     private String content;
 

@@ -11,11 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private List<Incident> incidentList=new ArrayList<>();
+    private List<Incident> incidentList;
     private RecyclerView recyclerView;
     private IncidentAdapter adapter;
 
@@ -23,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initial();
+        LitePal.getDatabase();
+        incidentList= DataSupport.findAll(Incident.class);
         recyclerView = findViewById(R.id.incident_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -36,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent =new Intent(MainActivity.this,Main2Activity.class);
                 intent.putExtra("incident",incident);
                 intent.putExtra("position",position);
-                intent.putExtra("status","edit");
+                intent.putExtra("status",1);
                 startActivityForResult(intent,2);
             }
         });
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.add_incident:
                 Intent intent=new Intent(MainActivity.this,Main2Activity.class);
-                intent.putExtra("status","add");
+                intent.putExtra("status",0);
                 intent.putExtra("position",incidentList.size());
                 intent.putExtra("incident",new Incident("",""));
                 startActivityForResult(intent,1);
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 if(resultCode==RESULT_OK){
                     Incident returnedIncident= (Incident) data.getSerializableExtra("incident_return");
+                    returnedIncident.save();
                     incidentList.add(returnedIncident);
                     adapter.notifyItemInserted(incidentList.size()-1);
                     Toast.makeText(MainActivity.this,"Successfully added",Toast.LENGTH_SHORT).show();
@@ -77,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             case  2:
                 if(resultCode==RESULT_OK){
                     Incident returnedIncident= (Incident) data.getSerializableExtra("incident_return");
+
                     int position = data.getIntExtra("position",0);
                     incidentList.set(position,returnedIncident);
                     adapter.notifyItemChanged(position);
@@ -90,11 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 }else if (resultCode==RESULT_CANCELED){}
         }
     }
-
-    public void initial(){
-        Incident incident1=new Incident("THE FIRST","I want to do");
-        incidentList.add(incident1);
-        Incident incident2=new Incident("THE SECOND","bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-        incidentList.add((incident2));
-    }
 }
+
+
